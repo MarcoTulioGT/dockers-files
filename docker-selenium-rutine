@@ -1,0 +1,30 @@
+FROM ubuntu:lunar
+RUN apt-get update &&  apt install -y libnss3
+RUN apt -f install -y
+RUN apt-get install -y wget
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN  apt-get install ./google-chrome-stable_current_amd64.deb -y
+#RUN apt-get install -y chromium-browser && apt install chromium-chromedriver
+#RUN apt install snapd
+#RUN snap install chromium
+RUN apt-get install -y chromium-browser
+RUN apt-get install -y python3 && apt-get install -y pip
+#&&  apt-get install python3.12-venv -y
+COPY requirements.txt /opt/app/requirements.txt
+WORKDIR /opt/app
+#RUN python3 -m venv /app/venv
+#RUN /bin/bash -c "source /app/venv/bin/activate && pip install --upgrade pip"
+#RUN /bin/bash -c "source /app/venv/bin/activate && pip install -r requirements.txt"
+RUN pip install -r requirements.txt --break-system-packages
+COPY monitor_routine  /opt/app/
+RUN echo "y" | apt-get install locales
+RUN  cd /usr/share/locales && ./install-language-pack es_GT.UTF-8
+RUN  dpkg-reconfigure locales
+RUN locale-gen en_US.UTF-8
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb  &&  echo "y" | dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb
+RUN echo "y"|apt-get install ./wkhtmltox_0.12.6-1.focal_amd64.deb
+#RUN apt install docker.io -y
+#RUN docker --version
+#RUN echo "y" | apt install ./wkhtmltox_0.12.6-1.focal_amd64.deb
+#RUN echo "y" | apt-get install sendmail
